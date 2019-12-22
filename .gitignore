@@ -30,4 +30,4 @@ build/
 ### VS Code ###
 .vscode/
 
-/src/main/resources/inner.properties
+/src/main/resources/application-inner.properties
