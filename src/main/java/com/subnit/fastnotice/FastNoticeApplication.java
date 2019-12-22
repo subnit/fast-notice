@@ -10,4 +10,5 @@ public class FastNoticeApplication {
 		SpringApplication.run(FastNoticeApplication.class, args);
 	}
 
+
 }
