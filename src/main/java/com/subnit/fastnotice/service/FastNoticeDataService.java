@@ -3,8 +3,11 @@ package com.subnit.fastnotice.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.mail.MessagingException;
 import javax.sql.DataSource;
@@ -17,10 +20,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 /**
- * description: data notice
+ * description:
+ * date : create in 下午10:26 2019/12/23
+ * modified by :
  *
- * @author subo177693
- * @date : create in 19:43 2019/12/20
+ * @author subo
  */
 @Service
 public class FastNoticeDataService implements ApplicationContextAware {
@@ -45,11 +49,12 @@ public class FastNoticeDataService implements ApplicationContextAware {
         // 1 get DataSource
         DataSource dataSource = getDataSource(db);
 
-        ExecutorService threadPool = TaskService.getThreadPool();
+        ExecutorService threadPool = Executors.newSingleThreadExecutor();
         // TODO插入一条记录 获取主键id
-        Integer noitceId = 0;
+        Integer noticeId = 0;
+        noticeStatusMap.put(noticeId, true);
         threadPool.execute(() -> {
-            while (noticeStatusMap.get(noitceId)) {
+            while (FastNoticeDataService.noticeStatusMap.get(noticeId)) {
                 try {
                     dataSource.getConnection();
                     Statement s = dataSource.getConnection().createStatement();
@@ -83,7 +88,8 @@ public class FastNoticeDataService implements ApplicationContextAware {
     }
 
     private DataSource getDataSource(String db) {
-        return null;
+        Map<String, DataSource> dataSourceMap = applicationContext.getBeansOfType(DataSource.class);
+        return dataSourceMap.get("dataSource");
     }
 
 

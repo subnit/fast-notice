@@ -1,5 +1,14 @@
 package com.subnit.fastnotice.util;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -15,19 +24,47 @@ import javax.mail.internet.MimeMessage;
 
 /**
  * description:
+ * date : create in 下午10:26 2019/12/23
+ * modified by :
  *
- * @author subo177693
- * @date : create in 19:25 2019/12/21
+ * @author subo
  */
+@Component
 public class NoticeUtils {
 
     private static String dingMessageTemplate = "{\"msgtype\":\"text\",\"text\":{\"content\": \"%s\" },\"at\":{\"atMobiles\": \"[%s]\",\"isAtAll\":false}}";
 
+    private static String username;
+
+    private static String password;
+
+    private static String smtpHost;
+
+    private static String from;
+
+    @Value("${notice.email.username}")
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Value("${notice.email.password}")
+    public void setassword(String password) {
+        this.password = password;
+    }
+
+    @Value("${notice.email.smtpHost}")
+    public void setmtpHost(String smtpHost) {
+        this.smtpHost = smtpHost;
+    }
+
+    @Value("${notice.email.from}")
+    public void setrom(String from) {
+        this.from = from;
+    }
+
     public static void sendEmail(String title, String emailContent, String email) throws MessagingException {
 
-        String smtpHost = "smtp.163.com";
-        String from = "subnit_notice@163.com";
-        SmtpAuth auth = new SmtpAuth(userName, password);
+        SmtpAuth auth = new SmtpAuth(username, password);
         Properties pro = System.getProperties();
         pro.put("mail.smtp.host", smtpHost);
         pro.put("mail.smtp.auth", "true");
@@ -50,7 +87,20 @@ public class NoticeUtils {
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
         String message = String.format(dingMessageTemplate, content, atMobiles);
-        HttpClient4.getHttpClient().postBody(webHook, message, headerMap);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpPost httpPost = new HttpPost(webHook);
+
+        httpPost.setHeader("Content-Type", "application/json;charset=utf8");
+        StringEntity requestEntity = new StringEntity(message,"UTF-8");
+
+        httpPost.setEntity(requestEntity);
+        try {
+            CloseableHttpResponse response=httpClient.execute(httpPost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //HttpClient4.getHttpClient().postBody(webHook, message, headerMap);
     }
 
 
