@@ -11,10 +11,14 @@ import java.util.concurrent.Executors;
 
 import javax.mail.MessagingException;
 import javax.sql.DataSource;
+
+import com.subnit.fastnotice.dao.NoticeDao;
+import com.subnit.fastnotice.dto.NoticeDO;
 import com.subnit.fastnotice.util.NoticeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -36,6 +40,9 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
     public static ConcurrentHashMap<Integer, Boolean> noticeStatusMap = new ConcurrentHashMap<>();
 
+    @Autowired
+    private NoticeDao noticeDao;
+
     /**
      *
      * @param db name of db
@@ -51,7 +58,8 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
         ExecutorService threadPool = Executors.newSingleThreadExecutor();
         // TODO插入一条记录 获取主键id
-        Integer noticeId = 0;
+        NoticeDO noticeForInsert = new NoticeDO();
+        Integer noticeId = noticeDao.insert(noticeForInsert);
         noticeStatusMap.put(noticeId, true);
         threadPool.execute(() -> {
             while (FastNoticeDataService.noticeStatusMap.get(noticeId)) {
@@ -89,7 +97,7 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
     private DataSource getDataSource(String db) {
         Map<String, DataSource> dataSourceMap = applicationContext.getBeansOfType(DataSource.class);
-        return dataSourceMap.get("dataSource");
+        return dataSourceMap.get(db);
     }
 
 

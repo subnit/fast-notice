@@ -74,6 +74,7 @@ public class NoticeUtils {
         MimeMessage message = new MimeMessage(ses);
         message.setFrom(new InternetAddress(from));
         String[] toList = email.trim().split(",");
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(from));
         for (String toAddress : toList) {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddress));
         }

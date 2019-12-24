@@ -27,7 +27,7 @@ public class FastNoticeDataServiceTest {
     public void addNotice() throws InterruptedException {
         String db = "dataSource";
         String sql = "select count(*) from notice";
-        String name = "测算监控";
+        String name = "测算监控测试";
         Integer interval = 1000;
         String email = "subnit@163.com";
         String dingWebHook = "https://oapi.dingtalk.com/robot/send?access_token=489f1600814a3175b5b4d048de8ac08f3ad3156a8242a7ee31268f9542f6dfb2";
