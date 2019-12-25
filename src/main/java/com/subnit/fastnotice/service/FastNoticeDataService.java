@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,7 +13,6 @@ import javax.sql.DataSource;
 
 import com.subnit.fastnotice.dao.NoticeDao;
 import com.subnit.fastnotice.dto.NoticeDO;
-import com.subnit.fastnotice.util.NoticeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -75,8 +73,7 @@ public class FastNoticeDataService implements ApplicationContextAware {
                     if (dataCount > 0) {
                         String title = String.format("通知提醒:%s", name);
                         String content = String.format("%s有%d条异常数据", name, dataCount);
-                        NoticeUtils.sendEmail(title, content, email);
-                        NoticeUtils.sendDingMessage(dingWebHook, title + "\n" + content, "");
+
 
                     }
                     Thread.sleep(interval);
