@@ -13,6 +13,9 @@ import javax.sql.DataSource;
 
 import com.subnit.fastnotice.dao.NoticeDao;
 import com.subnit.fastnotice.dto.NoticeDO;
+import com.subnit.fastnotice.service.notice.method.DingNoticeMethod;
+import com.subnit.fastnotice.service.notice.method.EmailNoticeMethod;
+import com.subnit.fastnotice.service.notice.method.NoticeMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -57,7 +60,10 @@ public class FastNoticeDataService implements ApplicationContextAware {
         ExecutorService threadPool = Executors.newSingleThreadExecutor();
         // TODO插入一条记录 获取主键id
         NoticeDO noticeForInsert = new NoticeDO();
-        Integer noticeId = noticeDao.insert(noticeForInsert);
+        noticeForInsert.setDb(db);
+        noticeForInsert.setSql(sql);
+        //Integer noticeId = noticeDao.insert(noticeForInsert);
+        Integer noticeId = 1;
         noticeStatusMap.put(noticeId, true);
         threadPool.execute(() -> {
             while (FastNoticeDataService.noticeStatusMap.get(noticeId)) {
@@ -73,11 +79,21 @@ public class FastNoticeDataService implements ApplicationContextAware {
                     if (dataCount > 0) {
                         String title = String.format("通知提醒:%s", name);
                         String content = String.format("%s有%d条异常数据", name, dataCount);
+                        Map<String, NoticeMethod> beansOfType = applicationContext.getBeansOfType(NoticeMethod.class);
+                        beansOfType.forEach((key, noticeMethod) -> {
+                            if (noticeMethod instanceof EmailNoticeMethod) {
+                                noticeMethod.sendNotice(title, content, email);
+                            }
 
+                            if (noticeMethod instanceof DingNoticeMethod) {
+                                noticeMethod.sendNotice(title, content, dingWebHook);
+                            }
+
+                        });
 
                     }
                     Thread.sleep(interval);
-                } catch (InterruptedException | SQLException | MessagingException e) {
+                } catch (InterruptedException | SQLException e) {
                     e.printStackTrace();
                 }
             }

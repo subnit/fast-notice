@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @author subo
  */
-@Service
+@Service("ding")
 public class DingNoticeMethod implements NoticeMethod{
 
     private static String dingMessageTemplate = "{\"msgtype\":\"text\",\"text\":{\"content\": \"%s\" },\"at\":{\"atMobiles\": \"[%s]\",\"isAtAll\":false}}";

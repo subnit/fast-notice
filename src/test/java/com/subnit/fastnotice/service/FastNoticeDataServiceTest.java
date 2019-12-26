@@ -30,7 +30,7 @@ public class FastNoticeDataServiceTest {
         String name = "测算监控测试";
         Integer interval = 1000;
         String email = "subnit@163.com";
-        String dingWebHook = "https://oapi.dingtalk.com/robot/send?access_token=489f1600814a3175b5b4d048de8ac08f3ad3156a8242a7ee31268f9542f6dfb2";
+        String dingWebHook = "{\"webHook\":\"https://oapi.dingtalk.com/robot/send?access_token=489f1600814a3175b5b4d048de8ac08f3ad3156a8242a7ee31268f9542f6dfb2\",\"atMobiles\":\"13241901419\"}";
         fastNoticeDataService.addNotice( db,  sql,  name,  interval,  email,  dingWebHook);
         Thread.sleep(100000000);
     }

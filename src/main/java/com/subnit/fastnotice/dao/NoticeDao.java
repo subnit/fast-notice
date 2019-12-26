@@ -21,12 +21,12 @@ public interface NoticeDao {
     int deleteByPrimaryKey(Long id);
 
     @Insert({
-        "insert into notice (id, db, name, ",
+        "insert into notice ( db, name, ",
         "interval, gmt_modified, ",
         "gmt_create, sql, ",
         "email, ding_webhook, ",
         "extend)",
-        "values (#{id,jdbcType=BIGINT}, #{db,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, ",
+        "values (#{db,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, ",
         "#{interval,jdbcType=VARCHAR}, #{gmtModified,jdbcType=TIMESTAMP}, ",
         "#{gmtCreate,jdbcType=TIMESTAMP}, #{sql,jdbcType=LONGVARCHAR}, ",
         "#{email,jdbcType=LONGVARCHAR}, #{dingWebhook,jdbcType=LONGVARCHAR}, ",
