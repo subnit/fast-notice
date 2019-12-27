@@ -5,23 +5,23 @@ import java.util.Date;
 public class NoticeDO {
     private Long id;
 
-    private String db;
+    private String dbName;
 
-    private String name;
+    private String noticeName;
 
-    private String interval;
+    private Integer noticeInterval;
+
+    private Boolean noticeStatus;
 
     private Date gmtModified;
 
     private Date gmtCreate;
 
-    private String sql;
+    private Boolean deleteStatus;
 
-    private String email;
+    private String sqlText;
 
-    private String dingWebhook;
-
-    private String extend;
+    private String noticeExtend;
 
     public Long getId() {
         return id;
@@ -31,28 +31,36 @@ public class NoticeDO {
         this.id = id;
     }
 
-    public String getDb() {
-        return db;
+    public String getDbName() {
+        return dbName;
     }
 
-    public void setDb(String db) {
-        this.db = db == null ? null : db.trim();
+    public void setDbName(String dbName) {
+        this.dbName = dbName == null ? null : dbName.trim();
     }
 
-    public String getName() {
-        return name;
+    public String getNoticeName() {
+        return noticeName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setNoticeName(String noticeName) {
+        this.noticeName = noticeName == null ? null : noticeName.trim();
     }
 
-    public String getInterval() {
-        return interval;
+    public Integer getNoticeInterval() {
+        return noticeInterval;
     }
 
-    public void setInterval(String interval) {
-        this.interval = interval == null ? null : interval.trim();
+    public void setNoticeInterval(Integer noticeInterval) {
+        this.noticeInterval = noticeInterval;
+    }
+
+    public Boolean getNoticeStatus() {
+        return noticeStatus;
+    }
+
+    public void setNoticeStatus(Boolean noticeStatus) {
+        this.noticeStatus = noticeStatus;
     }
 
     public Date getGmtModified() {
@@ -71,35 +79,28 @@ public class NoticeDO {
         this.gmtCreate = gmtCreate;
     }
 
-    public String getSql() {
-        return sql;
+    public Boolean getDeleteStatus() {
+        return deleteStatus;
     }
 
-    public void setSql(String sql) {
-        this.sql = sql == null ? null : sql.trim();
+    public void setDeleteStatus(Boolean deleteStatus) {
+        this.deleteStatus = deleteStatus;
     }
 
-    public String getEmail() {
-        return email;
+    public String getSqlText() {
+        return sqlText;
     }
 
-    public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
+    public void setSqlText(String sqlText) {
+        this.sqlText = sqlText == null ? null : sqlText.trim();
     }
 
-    public String getDingWebhook() {
-        return dingWebhook;
+    public String getNoticeExtend() {
+        return noticeExtend;
     }
 
-    public void setDingWebhook(String dingWebhook) {
-        this.dingWebhook = dingWebhook == null ? null : dingWebhook.trim();
+    public void setNoticeExtend(String noticeExtend) {
+        this.noticeExtend = noticeExtend == null ? null : noticeExtend.trim();
     }
 
-    public String getExtend() {
-        return extend;
-    }
-
-    public void setExtend(String extend) {
-        this.extend = extend == null ? null : extend.trim();
-    }
 }

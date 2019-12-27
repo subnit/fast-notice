@@ -3,16 +3,18 @@ package com.subnit.fastnotice.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.mail.MessagingException;
 import javax.sql.DataSource;
 
 import com.subnit.fastnotice.dao.NoticeDao;
+import com.subnit.fastnotice.dao.NoticeMethodDao;
 import com.subnit.fastnotice.dto.NoticeDO;
+import com.subnit.fastnotice.dto.NoticeMethodDO;
 import com.subnit.fastnotice.service.notice.method.DingNoticeMethod;
 import com.subnit.fastnotice.service.notice.method.EmailNoticeMethod;
 import com.subnit.fastnotice.service.notice.method.NoticeMethod;
@@ -39,10 +41,13 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    public static ConcurrentHashMap<Integer, Boolean> noticeStatusMap = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Long, Boolean> noticeStatusMap = new ConcurrentHashMap<>();
 
     @Autowired
     private NoticeDao noticeDao;
+
+    @Autowired
+    private NoticeMethodDao noticeMethodDao;
 
     /**
      *
@@ -57,13 +62,26 @@ public class FastNoticeDataService implements ApplicationContextAware {
         // 1 get DataSource
         DataSource dataSource = getDataSource(db);
 
-        ExecutorService threadPool = Executors.newSingleThreadExecutor();
         // TODO插入一条记录 获取主键id
         NoticeDO noticeForInsert = new NoticeDO();
-        noticeForInsert.setDb(db);
-        noticeForInsert.setSql(sql);
-        //Integer noticeId = noticeDao.insert(noticeForInsert);
-        Integer noticeId = 1;
+        noticeForInsert.setDbName(db);
+        noticeForInsert.setSqlText(sql);
+        noticeForInsert.setDbName(name);
+        noticeForInsert.setNoticeInterval(interval);
+        Date nowDate = new Date();
+        noticeForInsert.setGmtModified(nowDate);
+        noticeForInsert.setGmtCreate(nowDate);
+        Integer noticeId = noticeDao.insert(noticeForInsert);
+        return true;
+    }
+
+
+    public void addNoticeMethod(NoticeMethodDO noticeMethodDO) {
+        noticeMethodDao.insert(noticeMethodDO);
+    }
+
+    public void startNotice(Long noticeId) {
+        ExecutorService threadPool = Executors.newCachedThreadPool();
         noticeStatusMap.put(noticeId, true);
         threadPool.execute(() -> {
             while (FastNoticeDataService.noticeStatusMap.get(noticeId)) {
@@ -99,9 +117,9 @@ public class FastNoticeDataService implements ApplicationContextAware {
             }
 
         });
-
-        return true;
     }
+
+
 
     public void updateNoticeStatus(Integer noticeId, Boolean status) {
         noticeStatusMap.put(noticeId, status);
