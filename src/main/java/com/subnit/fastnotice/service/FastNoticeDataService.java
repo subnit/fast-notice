@@ -1,22 +1,9 @@
 package com.subnit.fastnotice.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.sql.DataSource;
-
 import com.subnit.fastnotice.dao.NoticeDao;
 import com.subnit.fastnotice.dao.NoticeMethodDao;
 import com.subnit.fastnotice.dto.NoticeDO;
 import com.subnit.fastnotice.dto.NoticeMethodDO;
-import com.subnit.fastnotice.service.notice.method.DingNoticeMethod;
-import com.subnit.fastnotice.service.notice.method.EmailNoticeMethod;
 import com.subnit.fastnotice.service.notice.method.NoticeMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * description:
@@ -55,23 +53,19 @@ public class FastNoticeDataService implements ApplicationContextAware {
      * @param sql only query sql are allowed
      * @param name notice name
      * @param interval  ms
-     * @param email notice email
-     * @param dingWebHook dingding WebHook for noitce, you can get the WebHook in a dingding chat group
      */
-    public boolean addNotice(String db, String sql, String name, Integer interval, String email, String dingWebHook) {
-        // 1 get DataSource
-        DataSource dataSource = getDataSource(db);
-
-        // TODO插入一条记录 获取主键id
+    public boolean addNotice(String db, String sql, String name, Integer interval) {
         NoticeDO noticeForInsert = new NoticeDO();
         noticeForInsert.setDbName(db);
         noticeForInsert.setSqlText(sql);
-        noticeForInsert.setDbName(name);
+        noticeForInsert.setNoticeName(name);
         noticeForInsert.setNoticeInterval(interval);
+        noticeForInsert.setNoticeStatus(0);
+        noticeForInsert.setDeleteStatus(1);
         Date nowDate = new Date();
         noticeForInsert.setGmtModified(nowDate);
         noticeForInsert.setGmtCreate(nowDate);
-        Integer noticeId = noticeDao.insert(noticeForInsert);
+        noticeDao.insert(noticeForInsert);
         return true;
     }
 
@@ -81,36 +75,45 @@ public class FastNoticeDataService implements ApplicationContextAware {
     }
 
     public void startNotice(Long noticeId) {
+        NoticeDO noticeDO = noticeDao.selectByPrimaryKey(noticeId);
+        NoticeDO noticeForUpdate = new NoticeDO();
+        noticeForUpdate.setId(noticeDO.getId());
+        noticeForUpdate.setNoticeStatus(1);
+        noticeDao.updateByPrimaryKey(noticeForUpdate);
+
+        String noticeName = noticeDO.getNoticeName();
+        Integer noticeInterval = noticeDO.getNoticeInterval();
+        List<NoticeMethodDO> noticeMethodList = noticeMethodDao.listByNoticeId(noticeId);
         ExecutorService threadPool = Executors.newCachedThreadPool();
         noticeStatusMap.put(noticeId, true);
         threadPool.execute(() -> {
-            while (FastNoticeDataService.noticeStatusMap.get(noticeId)) {
+            Boolean noticeStatus = FastNoticeDataService.noticeStatusMap.get(noticeId);
+            while (noticeStatus != null && noticeStatus) {
                 try {
+                    DataSource dataSource = getDataSource(noticeDO.getDbName());
                     dataSource.getConnection();
                     Statement s = dataSource.getConnection().createStatement();
-                    ResultSet rs = s.executeQuery(sql);
+                    ResultSet rs = s.executeQuery(noticeDO.getSqlText());
 
                     int dataCount = 0;
                     while(rs.next()) {
                         dataCount++;
                     }
                     if (dataCount > 0) {
-                        String title = String.format("通知提醒:%s", name);
-                        String content = String.format("%s有%d条异常数据", name, dataCount);
+                        String title = String.format("通知提醒:%s", noticeName);
+                        String content = String.format("%s有%d条异常数据", noticeName, dataCount);
                         Map<String, NoticeMethod> beansOfType = applicationContext.getBeansOfType(NoticeMethod.class);
-                        beansOfType.forEach((key, noticeMethod) -> {
-                            if (noticeMethod instanceof EmailNoticeMethod) {
-                                noticeMethod.sendNotice(title, content, email);
-                            }
 
-                            if (noticeMethod instanceof DingNoticeMethod) {
-                                noticeMethod.sendNotice(title, content, dingWebHook);
+                        noticeMethodList.forEach(dto -> {
+                            String noticeMethodService = dto.getNoticeMethodService();
+                            NoticeMethod noticeMethod = beansOfType.get(noticeMethodService);
+                            if (noticeMethod != null) {
+                                noticeMethod.sendNotice(title, content, dto.getTarget());
                             }
-
                         });
 
                     }
-                    Thread.sleep(interval);
+                    Thread.sleep(noticeInterval * 1000);
                 } catch (InterruptedException | SQLException e) {
                     e.printStackTrace();
                 }
@@ -121,9 +124,12 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
 
 
-    public void updateNoticeStatus(Integer noticeId, Boolean status) {
-        noticeStatusMap.put(noticeId, status);
-        // TODO 更新记录状态
+    public void stopNotice(Long noticeId) {
+        noticeStatusMap.put(noticeId, false);
+        NoticeDO noticeForUpdate = new NoticeDO();
+        noticeForUpdate.setId(noticeId);
+        noticeForUpdate.setNoticeStatus(1);
+        noticeDao.updateByPrimaryKey(noticeForUpdate);
     }
 
     private DataSource getDataSource(String db) {

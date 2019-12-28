@@ -1,10 +1,13 @@
 package com.subnit.fastnotice.service;
 
+import com.subnit.fastnotice.dto.NoticeMethodDO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -24,14 +27,45 @@ public class FastNoticeDataServiceTest {
     private FastNoticeDataService fastNoticeDataService;
 
     @Test
-    public void addNotice() throws InterruptedException {
+    public void addNotice() {
         String db = "dataSource";
         String sql = "select count(*) from notice";
         String name = "测试";
         Integer interval = 1000;
-        String email = "subnit@163.com";
+        fastNoticeDataService.addNotice( db,  sql,  name,  interval);
+    }
+
+    @Test
+    public void addNoticeMethod() {
+/*        NoticeMethodDO noticeMethodDO = new NoticeMethodDO();
+        noticeMethodDO.setNoticeId(7L);
+        noticeMethodDO.setNoticeMethod("email");
+        noticeMethodDO.setNoticeMethodService("emailNoticeMethod");
+        noticeMethodDO.setTarget("subnit@163.com");
+        Date nowDate = new Date();
+        noticeMethodDO.setGmtModified(nowDate);
+        noticeMethodDO.setGmtCreate(nowDate);*/
+
+        NoticeMethodDO noticeMethodDO = new NoticeMethodDO();
+        noticeMethodDO.setNoticeId(7L);
+        noticeMethodDO.setNoticeMethod("ding");
+        noticeMethodDO.setNoticeMethodService("dingNoticeMethod");
         String dingWebHook = "{\"webHook\":\"https://oapi.dingtalk.com/robot/send?access_token=489f1600814a3175b5b4d048de8ac08f3ad3156a8242a7ee31268f9542f6dfb2\",\"atMobiles\":\"13241901419\"}";
-        fastNoticeDataService.addNotice( db,  sql,  name,  interval,  email,  dingWebHook);
+        noticeMethodDO.setTarget(dingWebHook);
+        Date nowDate = new Date();
+        noticeMethodDO.setGmtModified(nowDate);
+        noticeMethodDO.setGmtCreate(nowDate);
+        fastNoticeDataService.addNoticeMethod(noticeMethodDO);
+    }
+
+    @Test
+    public void startNotice() throws InterruptedException {
+        fastNoticeDataService.startNotice(7L);
         Thread.sleep(100000000);
+    }
+
+    @Test
+    public void stopNotice() {
+        fastNoticeDataService.stopNotice(7L);
     }
 }

@@ -3,14 +3,10 @@ package com.subnit.fastnotice.dao;
 import java.util.List;
 
 import com.subnit.fastnotice.dto.NoticeMethodDO;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.sun.tracing.dtrace.ModuleAttributes;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
-
+@Mapper
 public interface NoticeMethodDao {
     @Delete({
         "delete from notice_method",
@@ -67,6 +63,25 @@ public interface NoticeMethodDao {
     })
     List<NoticeMethodDO> selectAll();
 
+
+    @Select({
+            "select",
+            "id, notice_id, notice_method, notice_method_service, gmt_modified, gmt_create, ",
+            "target, extend",
+            "from notice_method where notice_id = #{noticeId,jdbcType=BIGINT}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.BIGINT, id=true),
+            @Result(column="notice_id", property="noticeId", jdbcType=JdbcType.BIGINT),
+            @Result(column="notice_method", property="noticeMethod", jdbcType=JdbcType.VARCHAR),
+            @Result(column="notice_method_service", property="noticeMethodService", jdbcType=JdbcType.VARCHAR),
+            @Result(column="gmt_modified", property="gmtModified", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="gmt_create", property="gmtCreate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="target", property="target", jdbcType=JdbcType.LONGVARCHAR),
+            @Result(column="extend", property="extend", jdbcType=JdbcType.LONGVARCHAR)
+    })
+    List<NoticeMethodDO> listByNoticeId(Long noticeId);
+
     @Update({
         "update notice_method",
         "set notice_id = #{noticeId,jdbcType=BIGINT},",
@@ -79,4 +94,6 @@ public interface NoticeMethodDao {
         "where id = #{id,jdbcType=BIGINT}"
     })
     int updateByPrimaryKey(NoticeMethodDO record);
+
+
 }

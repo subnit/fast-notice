@@ -11,13 +11,13 @@ public class NoticeDO {
 
     private Integer noticeInterval;
 
-    private Boolean noticeStatus;
+    private Integer noticeStatus;
 
     private Date gmtModified;
 
     private Date gmtCreate;
 
-    private Boolean deleteStatus;
+    private Integer deleteStatus;
 
     private String sqlText;
 
@@ -55,11 +55,11 @@ public class NoticeDO {
         this.noticeInterval = noticeInterval;
     }
 
-    public Boolean getNoticeStatus() {
+    public Integer getNoticeStatus() {
         return noticeStatus;
     }
 
-    public void setNoticeStatus(Boolean noticeStatus) {
+    public void setNoticeStatus(Integer noticeStatus) {
         this.noticeStatus = noticeStatus;
     }
 
@@ -79,11 +79,11 @@ public class NoticeDO {
         this.gmtCreate = gmtCreate;
     }
 
-    public Boolean getDeleteStatus() {
+    public Integer getDeleteStatus() {
         return deleteStatus;
     }
 
-    public void setDeleteStatus(Boolean deleteStatus) {
+    public void setDeleteStatus(Integer deleteStatus) {
         this.deleteStatus = deleteStatus;
     }
 
