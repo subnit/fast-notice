@@ -75,7 +75,7 @@ public interface NoticeDao {
             "<if test='dbName!=null and dbName!=\"\" '> , db_name = #{dbName} </if>",
             "<if test='noticeName!=null and noticeName!=\"\" '> , notice_name = #{noticeName} </if>",
             "<if test='noticeInterval!=null and noticeInterval!=\"\" '> , notice_interval = #{noticeInterval} </if>",
-            "<if test='noticeStatus!=null and noticeStatus!=\"\" '> , notice_status = #{noticeStatus} </if>",
+            "<if test='noticeStatus!=null '> , notice_status = #{noticeStatus} </if>",
             "<if test='deleteStatus!=null and deleteStatus!=\"\" '> , delete_status = #{deleteStatus} </if>",
             "<if test='sqlText!=null and dbName!=\"\" '> , sql_text = #{sqlText} </if>",
             "<if test='noticeExtend!=null and noticeExtend!=\"\" '> , notice_extend = #{noticeExtend} </if>",

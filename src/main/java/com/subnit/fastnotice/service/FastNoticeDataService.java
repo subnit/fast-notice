@@ -39,7 +39,9 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    public static ConcurrentHashMap<Long, Boolean> noticeStatusMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Long, Boolean> noticeStatusMap = new ConcurrentHashMap<>();
+
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     @Autowired
     private NoticeDao noticeDao;
@@ -84,11 +86,9 @@ public class FastNoticeDataService implements ApplicationContextAware {
         String noticeName = noticeDO.getNoticeName();
         Integer noticeInterval = noticeDO.getNoticeInterval();
         List<NoticeMethodDO> noticeMethodList = noticeMethodDao.listByNoticeId(noticeId);
-        ExecutorService threadPool = Executors.newCachedThreadPool();
         noticeStatusMap.put(noticeId, true);
         threadPool.execute(() -> {
-            Boolean noticeStatus = FastNoticeDataService.noticeStatusMap.get(noticeId);
-            while (noticeStatus != null && noticeStatus) {
+            while (FastNoticeDataService.noticeStatusMap.get(noticeId) != null && FastNoticeDataService.noticeStatusMap.get(noticeId)) {
                 try {
                     DataSource dataSource = getDataSource(noticeDO.getDbName());
                     dataSource.getConnection();
@@ -128,7 +128,7 @@ public class FastNoticeDataService implements ApplicationContextAware {
         noticeStatusMap.put(noticeId, false);
         NoticeDO noticeForUpdate = new NoticeDO();
         noticeForUpdate.setId(noticeId);
-        noticeForUpdate.setNoticeStatus(1);
+        noticeForUpdate.setNoticeStatus(0);
         noticeDao.updateByPrimaryKey(noticeForUpdate);
     }
 
