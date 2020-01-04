@@ -1,7 +1,7 @@
-package fastnotice.subnit.controller;
+package com.subnit.notice.data.controller;
 
 
-import fastnotice.subnit.service.FastNoticeDataService;
+import com.subnit.notice.data.service.FastNoticeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

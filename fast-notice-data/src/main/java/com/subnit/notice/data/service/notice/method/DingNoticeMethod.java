@@ -1,4 +1,4 @@
-package fastnotice.subnit.service.notice.method;
+package com.subnit.notice.data.service.notice.method;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.client.methods.CloseableHttpResponse;

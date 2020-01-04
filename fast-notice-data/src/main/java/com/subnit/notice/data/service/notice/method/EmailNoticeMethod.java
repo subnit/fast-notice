@@ -1,6 +1,6 @@
-package fastnotice.subnit.service.notice.method;
+package com.subnit.notice.data.service.notice.method;
 
-import fastnotice.subnit.util.SmtpAuth;
+import com.subnit.notice.data.util.SmtpAuth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,10 @@
-package fastnotice.subnit.service;
+package com.subnit.notice.data.service;
 
-import fastnotice.subnit.dao.NoticeDao;
-import fastnotice.subnit.dao.NoticeMethodDao;
-import fastnotice.subnit.dto.NoticeDO;
-import fastnotice.subnit.dto.NoticeMethodDO;
-import fastnotice.subnit.service.notice.method.NoticeMethod;
+import com.subnit.notice.data.dao.NoticeMethodDao;
+import com.subnit.notice.data.dto.NoticeMethodDO;
+import com.subnit.notice.data.dao.NoticeDao;
+import com.subnit.notice.data.dto.NoticeDO;
+import com.subnit.notice.data.service.notice.method.NoticeMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;

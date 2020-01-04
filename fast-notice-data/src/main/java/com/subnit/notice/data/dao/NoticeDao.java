@@ -1,8 +1,8 @@
-package fastnotice.subnit.dao;
+package com.subnit.notice.data.dao;
 
 import java.util.List;
 
-import fastnotice.subnit.dto.NoticeDO;
+import com.subnit.notice.data.dto.NoticeDO;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 

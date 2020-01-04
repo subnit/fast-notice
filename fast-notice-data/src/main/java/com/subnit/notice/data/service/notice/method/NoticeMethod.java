@@ -1,4 +1,4 @@
-package fastnotice.subnit.service.notice.method;
+package com.subnit.notice.data.service.notice.method;
 
 /**
  * description:

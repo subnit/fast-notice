@@ -1,4 +1,4 @@
-package fastnotice.subnit.util;
+package com.subnit.notice.data.util;
 
 /**
  * description:

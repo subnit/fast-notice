@@ -1,4 +1,4 @@
-package fastnotice.subnit.dto;
+package com.subnit.notice.data.dto;
 
 import java.util.Date;
 

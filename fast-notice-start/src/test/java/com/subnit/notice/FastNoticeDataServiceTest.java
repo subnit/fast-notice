@@ -1,7 +1,7 @@
-package fastnotice.service;
+package com.subnit.notice;
 
-import fastnotice.subnit.dto.NoticeMethodDO;
-import fastnotice.subnit.service.FastNoticeDataService;
+import com.subnit.notice.data.dto.NoticeMethodDO;
+import com.subnit.notice.data.service.FastNoticeDataService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
