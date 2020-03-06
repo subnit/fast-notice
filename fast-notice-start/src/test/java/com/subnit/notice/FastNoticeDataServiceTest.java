@@ -1,5 +1,7 @@
 package com.subnit.notice;
 
+import com.alibaba.fastjson.JSONObject;
+import com.subnit.notice.data.dao.NoticeDao;
 import com.subnit.notice.data.dto.NoticeMethodDO;
 import com.subnit.notice.data.service.FastNoticeDataService;
 import org.junit.Test;
@@ -24,6 +26,9 @@ public class FastNoticeDataServiceTest {
 
     @Autowired
     private FastNoticeDataService fastNoticeDataService;
+
+    @Autowired
+    private NoticeDao noticeDao;
 
     @Test
     public void addNotice() {
@@ -59,6 +64,12 @@ public class FastNoticeDataServiceTest {
 
     @Test
     public void startNotice() throws InterruptedException {
+        System.out.println(JSONObject.toJSONString(noticeDao.selectAll()));
+
+
+
+
+
         fastNoticeDataService.startNotice(7L);
         Thread.sleep(100000000);
     }
