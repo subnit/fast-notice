@@ -40,8 +40,6 @@ public class FastNoticeDataService implements ApplicationContextAware {
 
     private static ConcurrentHashMap<Long, ScheduledFuture<?>> noticeScheduleMap = new ConcurrentHashMap<>();
 
-    private ExecutorService threadPool = Executors.newCachedThreadPool();
-
     private ScheduledExecutorService scheduleService = Executors.newScheduledThreadPool(10);
 
     @Autowired
@@ -85,17 +83,11 @@ public class FastNoticeDataService implements ApplicationContextAware {
         noticeDao.updateByPrimaryKey(noticeForUpdate);
 
         List<NoticeMethodDO> noticeMethodList = noticeMethodDao.listByNoticeId(noticeId);
-        ScheduledFuture<?> scheduledFuture = scheduleService.scheduleWithFixedDelay(new NoticeSecheduledExecutor(noticeDO, noticeMethodList, applicationContext.getBean(FastNoticeDataService.class)), 0, 10, TimeUnit.SECONDS);
+        FastNoticeDataService serviceBean = applicationContext.getBean(FastNoticeDataService.class);
+        NoticeSecheduledExecutor executor = new NoticeSecheduledExecutor(noticeDO, noticeMethodList, serviceBean);
+        ScheduledFuture<?> scheduledFuture = scheduleService.scheduleWithFixedDelay(executor, 0, 10, TimeUnit.SECONDS);
         noticeScheduleMap.put(noticeId, scheduledFuture);
 
-/*
-        noticeStatusMap.put(noticeId, true);
-        threadPool.execute(() -> {
-            while (FastNoticeDataService.noticeStatusMap.get(noticeId) != null && FastNoticeDataService.noticeStatusMap.get(noticeId)) {
-                noticeExecute(noticeDO, noticeMethodList);
-            }
-
-        });*/
     }
 
 

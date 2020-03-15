@@ -2,11 +2,7 @@ package com.subnit.notice.data.service;
 
 import com.subnit.notice.data.dto.NoticeDO;
 import com.subnit.notice.data.dto.NoticeMethodDO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-import java.beans.beancontext.BeanContext;
 import java.util.List;
 
 /**
@@ -21,7 +17,6 @@ public class NoticeSecheduledExecutor implements Runnable{
     private NoticeDO noticeDO;
 
     private List<NoticeMethodDO> noticeMethodList;
-    private ApplicationContext applicationContext;
     private FastNoticeDataService fastNoticeDataService;
 
 
